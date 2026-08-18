@@ -1,0 +1,24 @@
+# Correlated Attack Chain Detection
+# Combines multiple event types to detect a multi-stage attack
+# Maps to: T1046 -> T1087 -> T1110 -> T1078
+
+index=main host=dc (EventCode=4624 OR EventCode=4625) src_ip="192.168.57.10"
+| eval attack_phase=case(
+    EventCode=4625, "Phase 1: Brute Force Attempts",
+    EventCode=4624, "Phase 2: Successful Authentication",
+    1=1, "Other"
+)
+| where attack_phase!="Other"
+| stats count by attack_phase, src_ip
+| sort -count
+
+# Description:
+# This correlation query ties authentication events from the attacker IP
+# into a coherent attack timeline.
+#
+# Attack phases detected:
+# Phase 1: Brute Force / Password Spray (EventCode 4625)
+# Phase 2: Successful Authentication (EventCode 4624)
+#
+# Alert recommendation:
+# - Trigger when Phases 1 AND 2 occur within 30 minutes from same src_ip

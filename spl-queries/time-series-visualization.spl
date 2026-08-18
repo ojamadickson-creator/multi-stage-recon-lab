@@ -1,0 +1,17 @@
+# Time Series Visualization of Failed Logins
+# Creates a time-based chart to visualize attack patterns
+# MITRE ATT&CK: T1110 - Brute Force
+# Event Code: 4625 - An account failed to log on
+
+index=main sourcetype="WinEventLog" EventCode=4625
+| timechart span=1m count by src_ip
+
+# Description:
+# This query creates a time series chart showing failed login attempts
+# over time, grouped by source IP. Useful for visualizing attack patterns
+# and identifying when an attack began and ended.
+#
+# Dashboard Integration:
+# - Save as a panel in the Detection Engineering1 dashboard
+# - Set visualization type to Column Chart
+# - Use with a 5-minute time window for real-time monitoring

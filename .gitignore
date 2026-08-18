@@ -1,0 +1,75 @@
+# Git ignore rules for Multi-Stage Recon Lab
+
+# Virtual machine files
+*.vdi
+*.vmdk
+*.vhd
+*.vhdx
+*.ovf
+*.ova
+*.vmx
+*.vmxf
+*.vmss
+*.vmsd
+*.nvram
+
+# OS-specific files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# IDE and editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Log files
+*.log
+logs/
+
+# Splunk generated files
+*.idx
+*.tsidx
+*.journal
+*.bucketManifest
+
+# Temporary files
+*.tmp
+*.temp
+tmp/
+temp/
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+*.egg-info/
+dist/
+build/
+
+# Node modules (if any web components)
+node_modules/
+
+# Large binary files
+*.iso
+*.exe
+*.msi
+*.dmg
+
+# Personal configuration files (keep templates only)
+configs/splunk/local/
+!configs/splunk/*.conf
+!configs/splunk/**/*.md
+
+# Output directories (generated during lab)
+recon-output/
+reports/generated/
+
+# Backup files
+*.bak
+*.backup
+pdf-qa/   generate_pdf_part1.py

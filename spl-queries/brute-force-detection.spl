@@ -1,0 +1,25 @@
+# Brute Force / Password Spray Detection
+# Detects multiple failed login attempts from a single source IP
+# MITRE ATT&CK: T1110 - Brute Force
+# Event Code: 4625 - An account failed to log on
+
+index=main host=dc EventCode=4625
+| stats count by src_ip
+| where count > 5
+
+# Description:
+# This query counts failed logon events (EventCode 4625) grouped by source IP.
+# A high number of failed attempts from a single IP indicates a brute force
+# or password spraying attack.
+#
+# Lab Results: 105 failed login attempts from attacker IP 192.168.57.10
+#
+# Tuning recommendations:
+# - Adjust the threshold (count > 5) based on your environment's baseline
+# - Exclude known service accounts that may legitimately fail
+# - Consider time windows (e.g., count > 5 in 1 hour vs. all time)
+# - Whitelist trusted IP ranges (admin jump boxes, etc.)
+#
+# Alert threshold suggestion:
+# - Trigger alert when count > 5 failed attempts in 1 minute from same src_ip
+# - Escalate when count > 20 in 5 minutes
