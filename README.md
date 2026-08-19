@@ -134,7 +134,7 @@ Before I touched a single command, I needed a username to target. In a real worl
 
 This is a critical first step that many technical write ups skip. Understanding how usernames are acquired, whether through phishing, dumpster diving, or simply guessing based on naming conventions, is essential for building realistic attack simulations and effective defenses.
 
-**MITRE Mapping:** T1566 — Phishing (pre attack intelligence gathering)
+**MITRE Mapping:** T1566 — Phishing (initial access)
 
 ---
 
