@@ -2,23 +2,23 @@
 
 ## Lab Network Architecture
 
-This document provides detailed specifications for the SOC lab network topology used in the Multi-Stage Reconnaissance project.
+This document provides detailed specifications for the SOC lab network topology used in the Multi Stage Reconnaissance project.
 
 ## Physical / Virtual Setup
 
 All systems are deployed as virtual machines using **Oracle VirtualBox** (or VMware Workstation). The host machine should have:
 
-- **CPU:** 4+ cores (8+ recommended)
-- **RAM:** 16GB minimum (32GB recommended)
-- **Storage:** 100GB+ free space
-- **Network:** Host-only and NAT networks configured
+* **CPU:** 4+ cores (8+ recommended)
+* **RAM:** 16GB minimum (32GB recommended)
+* **Storage:** 100GB+ free space
+* **Network:** Host only and NAT networks configured
 
 ## VirtualBox Network Configuration
 
-### Host-Only Network (LAN Zone)
+### Host Only Network (LAN Zone)
 
 ```
-Name: VirtualBox Host-Only Ethernet Adapter
+Name: VirtualBox Host Only Ethernet Adapter
 IPv4 Address: 192.168.56.1
 IPv4 Network Mask: 255.255.255.0
 DHCP: Disabled (all VMs use static IPs)
@@ -39,14 +39,14 @@ DHCP: Enabled (Kali gets IP via DHCP, but we set static)
 
 | Property | Value |
 |----------|-------|
-| **VM Name** | OPNsense-Firewall |
-| **OS** | OPNsense (FreeBSD-based) |
+| **VM Name** | OPNsense Firewall |
+| **OS** | OPNsense (FreeBSD based) |
 | **Version** | 23.x or later |
 | **vCPUs** | 1 |
 | **RAM** | 1GB |
 | **Disk** | 8GB |
 | **Adapter 1 (WAN)** | NAT Network (192.168.57.0/24) |
-| **Adapter 2 (LAN)** | Host-Only (192.168.56.0/24) |
+| **Adapter 2 (LAN)** | Host Only (192.168.56.0/24) |
 | **WAN IP** | 192.168.57.254/24 |
 | **LAN IP** | 192.168.56.254/24 |
 | **Role** | Gateway, NAT, Firewall, DHCP (optional) |
@@ -55,12 +55,12 @@ DHCP: Enabled (Kali gets IP via DHCP, but we set static)
 
 | Property | Value |
 |----------|-------|
-| **VM Name** | WIN2016-DC |
+| **VM Name** | WIN2016 DC |
 | **OS** | Windows Server 2016/2019 Standard |
 | **vCPUs** | 2 |
 | **RAM** | 4GB |
 | **Disk** | 60GB |
-| **Network Adapter** | Host-Only |
+| **Network Adapter** | Host Only |
 | **IP Address** | 192.168.56.102/24 |
 | **Default Gateway** | 192.168.56.254 |
 | **DNS Server** | 127.0.0.1 (itself) |
@@ -74,12 +74,12 @@ DHCP: Enabled (Kali gets IP via DHCP, but we set static)
 
 | Property | Value |
 |----------|-------|
-| **VM Name** | WIN10-Mgmt |
+| **VM Name** | WIN10 Mgmt |
 | **OS** | Windows 10 Pro |
 | **vCPUs** | 2 |
 | **RAM** | 4GB |
 | **Disk** | 60GB |
-| **Network Adapter** | Host-Only |
+| **Network Adapter** | Host Only |
 | **IP Address** | 192.168.56.104/24 |
 | **Default Gateway** | 192.168.56.254 |
 | **DNS Server** | 192.168.56.102 |
@@ -91,12 +91,12 @@ DHCP: Enabled (Kali gets IP via DHCP, but we set static)
 
 | Property | Value |
 |----------|-------|
-| **VM Name** | Splunk-SIEM |
+| **VM Name** | Splunk SIEM |
 | **OS** | Ubuntu Server 20.04/22.04 LTS |
 | **vCPUs** | 2 |
 | **RAM** | 4GB |
 | **Disk** | 80GB |
-| **Network Adapter** | Host-Only |
+| **Network Adapter** | Host Only |
 | **IP Address** | 192.168.56.106/24 |
 | **Default Gateway** | 192.168.56.254 |
 | **DNS Server** | 192.168.56.102 |
@@ -111,7 +111,7 @@ DHCP: Enabled (Kali gets IP via DHCP, but we set static)
 
 | Property | Value |
 |----------|-------|
-| **VM Name** | Kali-Attacker |
+| **VM Name** | Kali Attacker |
 | **OS** | Kali Linux (Rolling) |
 | **vCPUs** | 2 |
 | **RAM** | 4GB |
@@ -121,7 +121,7 @@ DHCP: Enabled (Kali gets IP via DHCP, but we set static)
 | **Default Gateway** | 192.168.57.254 |
 | **DNS Server** | 192.168.57.254 |
 | **Hostname** | kali |
-| **Installed Tools** | nmap, netexec, ldap-utils, wireshark |
+| **Installed Tools** | nmap, netexec, ldap utils, wireshark |
 
 ## Routing Configuration
 
@@ -129,12 +129,12 @@ DHCP: Enabled (Kali gets IP via DHCP, but we set static)
 
 ```
 Static Routes:
-  (None required - directly connected networks)
+  (None required   directly connected networks)
 
 NAT Rules:
   Outbound NAT (Automatic):
     - LAN to WAN: Masquerade all traffic
-  
+
   Port Forwards (for lab access):
     - WAN:3389 -> 192.168.56.102:3389 (RDP to DC)
     - WAN:445  -> 192.168.56.102:445  (SMB to DC)
@@ -177,7 +177,7 @@ ping -c 3 192.168.56.102
 
 ## Firewall Rules Detail
 
-### Floating Rules (Cross-Zone)
+### Floating Rules (Cross Zone)
 
 | # | Action | Proto | Source | Dest | Port | Desc |
 |---|--------|-------|--------|------|------|------|

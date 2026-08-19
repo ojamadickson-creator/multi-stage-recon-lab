@@ -2,13 +2,13 @@
 
 ## Remediation Priorities for Active Directory Environment
 
-This document outlines specific, actionable remediation steps based on findings from the Multi-Stage Reconnaissance lab exercise. Items are prioritized by risk reduction impact and implementation effort.
+This document outlines specific, actionable remediation steps based on findings from the Multi Stage Reconnaissance lab exercise. Items are prioritized by risk reduction impact and implementation effort.
 
 ---
 
 ## Priority 1: Critical (Implement Immediately)
 
-### 1.1 Deploy Multi-Factor Authentication (MFA)
+### 1.1 Deploy Multi Factor Authentication (MFA)
 
 **Risk Addressed:** T1078 (Valid Accounts), T1110 (Brute Force)
 
@@ -16,9 +16,9 @@ This document outlines specific, actionable remediation steps based on findings 
 Password spraying and brute force attacks become significantly less effective when MFA is enforced. Even with valid credentials, an attacker cannot authenticate without the second factor.
 
 **Implementation:**
-- Deploy Azure AD MFA or on-premises MFA solution (Duo, Okta, Microsoft Authenticator)
-- Enforce MFA for all user accounts, especially privileged accounts
-- Consider hardware tokens for Domain Admins
+* Deploy Azure AD MFA or on premises MFA solution (Duo, Okta, Microsoft Authenticator)
+* Enforce MFA for all user accounts, especially privileged accounts
+* Consider hardware tokens for Domain Admins
 
 **Effort:** Medium
 **Impact:** Very High
@@ -30,7 +30,7 @@ Password spraying and brute force attacks become significantly less effective wh
 **Risk Addressed:** T1110 (Brute Force)
 
 **Description:**
-The lab demonstrated that 1,191 failed logon attempts were possible without triggering any account lockout. This allows unlimited password guessing.
+The lab demonstrated that 105 failed logon attempts were possible without triggering any account lockout. This allows unlimited password guessing.
 
 **Recommended Policy:**
 ```
@@ -40,9 +40,9 @@ Reset account lockout counter after: 30 minutes
 ```
 
 **Implementation:**
-- Configure via Group Policy: Computer Configuration > Windows Settings > Security Settings > Account Policies > Account Lockout Policy
-- Apply to all domain users
-- Monitor for lockout events (Event ID 4740)
+* Configure via Group Policy: Computer Configuration > Windows Settings > Security Settings > Account Policies > Account Lockout Policy
+* Apply to all domain users
+* Monitor for lockout events (Event ID 4740)
 
 **Effort:** Low
 **Impact:** High
@@ -54,7 +54,7 @@ Reset account lockout counter after: 30 minutes
 **Risk Addressed:** T1110 (Brute Force), T1078 (Valid Accounts)
 
 **Description:**
-The password "vagrant" is a weak, dictionary-based password that was quickly discovered through password spraying.
+The password "vagrant" is a weak, dictionary based password that was quickly discovered through password spraying.
 
 **Recommended Policy:**
 ```
@@ -66,9 +66,9 @@ Enforce password history: 24 passwords remembered
 ```
 
 **Additional Measures:**
-- Implement banned password list (Azure AD Password Protection or custom)
-- Block common passwords and keyboard walks
-- Consider passphrase policy instead of complex passwords
+* Implement banned password list (Azure AD Password Protection or custom)
+* Block common passwords and keyboard walks
+* Consider passphrase policy instead of complex passwords
 
 **Effort:** Low
 **Impact:** High
@@ -88,7 +88,7 @@ LAPS automatically manages local administrator passwords, ensuring each system h
 1. Download LAPS from Microsoft
 2. Install on Domain Controller
 3. Extend AD schema for LAPS attributes
-4. Deploy LAPS client to all domain-joined systems
+4. Deploy LAPS client to all domain joined systems
 5. Configure GPO for password complexity and rotation
 
 **Effort:** Medium
@@ -101,13 +101,13 @@ LAPS automatically manages local administrator passwords, ensuring each system h
 **Risk Addressed:** T1078 (Valid Accounts), T1071 (Application Layer Protocol)
 
 **Description:**
-Restrict privileged account usage with just-in-time (JIT) access and privileged access workstations (PAWs).
+Restrict privileged account usage with just in time (JIT) access and privileged access workstations (PAWs).
 
 **Implementation:**
-- Create separate admin accounts (not daily-use accounts)
-- Implement time-bound privileged access
-- Use jump servers for all administrative tasks
-- Monitor privileged account usage with enhanced logging
+* Create separate admin accounts (not daily use accounts)
+* Implement time bound privileged access
+* Use jump servers for all administrative tasks
+* Monitor privileged account usage with enhanced logging
 
 **Effort:** High
 **Impact:** Very High
@@ -128,10 +128,10 @@ Sysmon provides detailed information about process creations, network connection
 4. Create alerts for suspicious process patterns
 
 **Recommended Sysmon Rules:**
-- Detect Mimikatz execution
-- Detect encoded PowerShell commands
-- Detect suspicious WMI usage
-- Detect LSASS access from non-system processes
+* Detect Mimikatz execution
+* Detect encoded PowerShell commands
+* Detect suspicious WMI usage
+* Detect LSASS access from non system processes
 
 **Effort:** Medium
 **Impact:** High
@@ -143,7 +143,7 @@ Sysmon provides detailed information about process creations, network connection
 **Risk Addressed:** T1003.001 (LSASS Memory Dumping)
 
 **Description:**
-Credential Guard uses virtualization-based security to isolate the LSASS process, preventing credential theft attacks.
+Credential Guard uses virtualization based security to isolate the LSASS process, preventing credential theft attacks.
 
 **Implementation:**
 1. Verify hardware requirements (TPM 2.0, UEFI 2.3.1c, Secure Boot)
@@ -165,15 +165,15 @@ Credential Guard uses virtualization-based security to isolate the LSASS process
 Implement proper network segmentation to contain lateral movement and limit attacker access.
 
 **Recommendations:**
-- Separate management network from user network
-- Implement VLANs for different system tiers
-- Restrict SMB/RDP to management network only
-- Deploy host-based firewalls on all systems
+* Separate management network from user network
+* Implement VLANs for different system tiers
+* Restrict SMB/RDP to management network only
+* Deploy host based firewalls on all systems
 
 **Implementation:**
-- Redesign network architecture with tiered security zones
-- Implement firewall rules restricting east-west traffic
-- Use jump boxes for cross-zone access
+* Redesign network architecture with tiered security zones
+* Implement firewall rules restricting east west traffic
+* Use jump boxes for cross zone access
 
 **Effort:** High
 **Impact:** High
@@ -185,18 +185,18 @@ Implement proper network segmentation to contain lateral movement and limit atta
 **Risk Addressed:** All execution and persistence techniques
 
 **Description:**
-EDR provides real-time behavioral analysis and automated response capabilities beyond what SIEM alone can offer.
+EDR provides real time behavioral analysis and automated response capabilities beyond what SIEM alone can offer.
 
 **Options:**
-- Microsoft Defender for Endpoint
-- CrowdStrike Falcon
-- SentinelOne
-- Carbon Black
+* Microsoft Defender for Endpoint
+* CrowdStrike Falcon
+* SentinelOne
+* Carbon Black
 
 **Integration with Splunk:**
-- Forward EDR alerts to Splunk
-- Correlate EDR and SIEM data
-- Create unified detection rules
+* Forward EDR alerts to Splunk
+* Correlate EDR and SIEM data
+* Create unified detection rules
 
 **Effort:** High
 **Impact:** Very High
@@ -229,10 +229,10 @@ PowerShell is heavily abused by attackers. Comprehensive logging and constrained
 Regular testing validates that controls are effective and identifies new vulnerabilities.
 
 **Recommendations:**
-- Quarterly internal penetration tests
-- Annual external penetration tests
-- Continuous purple team exercises
-- Attack simulation with tools like Atomic Red Team
+* Quarterly internal penetration tests
+* Annual external penetration tests
+* Continuous purple team exercises
+* Attack simulation with tools like Atomic Red Team
 
 **Effort:** Medium (ongoing)
 **Impact:** High
@@ -249,10 +249,10 @@ Regular testing validates that controls are effective and identifies new vulnera
 Users are often the weakest link. Regular training reduces susceptibility to phishing and social engineering.
 
 **Program Components:**
-- Monthly phishing simulations
-- Quarterly security awareness training
-- Incident reporting procedures
-- Password hygiene education
+* Monthly phishing simulations
+* Quarterly security awareness training
+* Incident reporting procedures
+* Password hygiene education
 
 ---
 
@@ -264,10 +264,10 @@ Users are often the weakest link. Regular training reduces susceptibility to phi
 Regular patching and vulnerability scanning reduces the attack surface.
 
 **Recommendations:**
-- Monthly vulnerability scans
-- Quarterly patch cycles
-- Emergency patching for critical vulnerabilities
-- Asset inventory and lifecycle management
+* Monthly vulnerability scans
+* Quarterly patch cycles
+* Emergency patching for critical vulnerabilities
+* Asset inventory and lifecycle management
 
 ---
 
@@ -279,10 +279,10 @@ Regular patching and vulnerability scanning reduces the attack surface.
 Detection rules require continuous tuning to reduce false positives and catch evolving threats.
 
 **Activities:**
-- Weekly alert review and tuning
-- Monthly detection engineering sprints
-- Quarterly MITRE ATT&CK coverage assessment
-- Annual purple team validation
+* Weekly alert review and tuning
+* Monthly detection engineering sprints
+* Quarterly MITRE ATT&CK coverage assessment
+* Annual purple team validation
 
 ---
 

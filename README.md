@@ -1,56 +1,56 @@
-# Multi-Stage Reconnaissance & Active Directory Penetration Testing Lab
+# Multi Stage Reconnaissance & Active Directory Penetration Testing Lab
 
 [![Security](https://img.shields.io/badge/Security-Red%20%26%20Blue%20Team-blue)](https://github.com/yourusername/multi-stage-recon-lab)
 [![Splunk](https://img.shields.io/badge/SIEM-Splunk%20Enterprise-green)](https://www.splunk.com)
 [![MITRE ATT&CK](https://img.shields.io/badge/Framework-MITRE%20ATT%26CK-red)](https://attack.mitre.org)
 [![YouTube](https://img.shields.io/badge/Video-Walkthrough-red?logo=youtube)](https://www.youtube.com/watch?v=NHnI9oP_xTY)
 
-> **A hands-on cybersecurity lab simulating a full multi-stage reconnaissance attack against an Active Directory environment, coupled with real-time SIEM detection and alerting using Splunk Enterprise.**
+> **A hands on cybersecurity lab simulating a full multi stage reconnaissance attack against an Active Directory environment, coupled with real time SIEM detection and alerting using Splunk Enterprise.**
 
-> **Video Walkthrough:** [Multi-Stage Recon & AD Penetration Testing Lab (YouTube)](https://www.youtube.com/watch?v=NHnI9oP_xTY)
+> **Video Walkthrough:** [Multi Stage Recon & AD Penetration Testing Lab (YouTube)](https://www.youtube.com/watch?v=NHnI9oP_xTY)
 
 ---
 
 ## Table of Contents
 
-- [Overview](#overview)
-- [Lab Architecture](#lab-architecture)
-  - [Network Topology](#network-topology)
-  - [System Specifications](#system-specifications)
-- [Attack Chain (Red Team)](#attack-chain-red-team)
-  - [Phase 0: Username Acquisition via Social Engineering](#phase-0-username-acquisition-via-social-engineering)
-  - [Phase 1: Network Reconnaissance](#phase-1-network-reconnaissance)
-  - [Phase 2: LDAP Enumeration](#phase-2-ldap-enumeration)
-  - [Phase 3: Credential Access via Password Spraying](#phase-3-credential-access-via-password-spraying)
-  - [Phase 4: Post-Compromise Enumeration](#phase-4-post-compromise-enumeration)
-- [Detection & Monitoring (Blue Team)](#detection--monitoring-blue-team)
-  - [Splunk Data Ingestion](#splunk-data-ingestion)
-  - [SPL Detection Queries](#spl-detection-queries)
-  - [Dashboards](#dashboards)
-  - [Alerts](#alerts)
-  - [Correlation Queries](#correlation-queries)
-- [MITRE ATT&CK Mapping](#mitre-attck-mapping)
-- [Screenshots Gallery](#screenshots-gallery)
-- [Repository Structure](#repository-structure)
-- [Setup Guide](#setup-guide)
-- [About the Author](#about-the-author)
-- [Ethical Disclaimer](#ethical-disclaimer)
+* [Overview](#overview)
+* [Lab Architecture](#lab-architecture)
+  * [Network Topology](#network-topology)
+  * [System Specifications](#system-specifications)
+* [Attack Chain (Red Team)](#attack-chain-red-team)
+  * [Phase 1: Username Acquisition via Social Engineering](#phase-1-username-acquisition-via-social-engineering)
+  * [Phase 2: Network Reconnaissance](#phase-2-network-reconnaissance)
+  * [Phase 3: LDAP Enumeration](#phase-3-ldap-enumeration)
+  * [Phase 4: Credential Access via Password Spraying](#phase-4-credential-access-via-password-spraying)
+  * [Phase 5: Post Compromise Enumeration](#phase-5-post-compromise-enumeration)
+* [Detection & Monitoring (Blue Team)](#detection--monitoring-blue-team)
+  * [Splunk Data Ingestion](#splunk-data-ingestion)
+  * [SPL Detection Queries](#spl-detection-queries)
+  * [Dashboards](#dashboards)
+  * [Alerts](#alerts)
+  * [Correlation Queries](#correlation-queries)
+* [MITRE ATT&CK Mapping](#mitre-attck-mapping)
+* [Screenshots Gallery](#screenshots-gallery)
+* [Repository Structure](#repository-structure)
+* [Setup Guide](#setup-guide)
+* [About the Author](#about-the-author)
+* [Ethical Disclaimer](#ethical-disclaimer)
 
 ---
 
 ## Overview
 
-This lab demonstrates a realistic multi-stage attack scenario against a Windows Active Directory domain controller, followed by comprehensive detection engineering using Splunk SIEM. Here's the thing — most security courses teach attacks or defense in isolation. But in the real world? They're inseparable. You can't defend against what you don't understand, and you can't attack effectively without knowing how defenders think.
+This lab demonstrates a realistic multi stage attack scenario against a Windows Active Directory domain controller, followed by comprehensive detection engineering using Splunk SIEM. Here's the thing. Most security courses teach attacks or defense in isolation. But in the real world? They're inseparable. You can't defend against what you don't understand, and you can't attack effectively without knowing how defenders think.
 
-I built this lab to bridge that gap. On one side, I took the Red Team perspective — running reconnaissance, enumerating services, and eventually compromising credentials. On the other, I switched to the Blue Team perspective, building detection logic in Splunk to catch every move I had just made. Honestly, it's one of the most effective ways to learn both sides of the cybersecurity coin.
+I built this lab to bridge that gap. On one side, I took the Red Team perspective. Running reconnaissance, enumerating services, and eventually compromising credentials. On the other, I switched to the Blue Team perspective, building detection logic in Splunk to catch every move I had just made. Honestly, it's one of the most effective ways to learn both sides of the cybersecurity coin.
 
 **What you'll learn:**
-- How attackers map and enumerate internal networks
-- How LDAP and SMB protocols can be abused for reconnaissance
-- How password spraying differs from brute force (and why it works)
-- How to build detection logic in Splunk using Windows Event Logs
-- How to correlate multiple attack phases into a single detection narrative
-- How to build actionable dashboards and alerts that actually reduce noise
+* How attackers map and enumerate internal networks
+* How LDAP and SMB protocols can be abused for reconnaissance
+* How password spraying differs from brute force (and why it works)
+* How to build detection logic in Splunk using Windows Event Logs
+* How to correlate multiple attack phases into a single detection narrative
+* How to build actionable dashboards and alerts that actually reduce noise
 
 ---
 
@@ -124,21 +124,21 @@ I built this lab to bridge that gap. On one side, I took the Red Team perspectiv
 
 ## Attack Chain (Red Team)
 
-### Phase 0: Username Acquisition via Social Engineering
+### Phase 1: Username Acquisition via Social Engineering
 
 **Objective:** Obtain a valid username for the target domain before launching technical attacks.
 
-Before I touched a single command, I needed a username to target. In a real-world scenario, this often comes from open-source intelligence (OSINT) gathering — LinkedIn profiles, company directories, or email patterns. For this lab, I assumed the role of an attacker who had already obtained a username through spear phishing or social engineering reconnaissance.
+Before I touched a single command, I needed a username to target. In a real world scenario, this often comes from open source intelligence (OSINT) gathering. LinkedIn profiles, company directories, or email patterns. For this lab, I assumed the role of an attacker who had already obtained a username through spear phishing or social engineering reconnaissance.
 
 **The username acquired:** `vagrant`
 
-This is a critical first step that many technical write-ups skip. Understanding how usernames are acquired — whether through phishing, dumpster diving, or simply guessing based on naming conventions — is essential for building realistic attack simulations and effective defenses.
+This is a critical first step that many technical write ups skip. Understanding how usernames are acquired, whether through phishing, dumpster diving, or simply guessing based on naming conventions, is essential for building realistic attack simulations and effective defenses.
 
-**MITRE Mapping:** T1566 - Phishing (pre-attack intelligence gathering)
+**MITRE Mapping:** T1566 — Phishing (pre attack intelligence gathering)
 
 ---
 
-### Phase 1: Network Reconnaissance
+### Phase 2: Network Reconnaissance
 
 **Objective:** Discover live hosts and open services on the target network.
 
@@ -159,22 +159,22 @@ nmap -Pn -sV -p 53,389,445,3389 192.168.56.102
 ```
 
 **What each flag does:**
-- `-Pn` — Skip host discovery (treat target as online, no ping)
-- `-sV` — Probe open ports to determine service/version info
-- `-p 53,389,445,3389` — Scan only these specific ports:
-  - `53` — DNS (Domain Name System)
-  - `389` — LDAP (Lightweight Directory Access Protocol)
-  - `445` — SMB (Server Message Block / Microsoft-DS)
-  - `3389` — RDP (Remote Desktop Protocol)
+* `-Pn` — Skip host discovery (treat target as online, no ping)
+* `-sV` — Probe open ports to determine service/version info
+* `-p 53,389,445,3389` — Scan only these specific ports:
+  * `53` — DNS (Domain Name System)
+  * `389` — LDAP (Lightweight Directory Access Protocol)
+  * `445` — SMB (Server Message Block / Microsoft DS)
+  * `3389` — RDP (Remote Desktop Protocol)
 
 **What the output tells us:**
-The scan reveals a Windows Server acting as a Domain Controller with LDAP, SMB, and RDP services exposed. This is a goldmine for an attacker — SMB and LDAP are the two most commonly abused protocols in AD attacks.
+The scan reveals a Windows Server acting as a Domain Controller with LDAP, SMB, and RDP exposed. This is a goldmine for an attacker. SMB and LDAP are the two most commonly abused protocols in AD attacks.
 
 ![Nmap Scan Results](screenshots/Nmap%20Scan.png)
 
 ---
 
-### Phase 2: LDAP Enumeration
+### Phase 3: LDAP Enumeration
 
 **Objective:** Extract user accounts, domain structure, and directory information from the target.
 
@@ -182,36 +182,36 @@ The scan reveals a Windows Server acting as a Domain Controller with LDAP, SMB, 
 
 ```bash
 # Query LDAP for all user accounts in the domain
-ldapsearch -x -H ldap://192.168.56.102 \
-  -D "windomain\vagrant" -w "vagrant" \
-  -b "dc=windomain,dc=local" \
-  "(&(objectclass=user)(SAMAccountName=*))" \
-  | grep sAMAccountName
+ldapsearch -x -H ldap://192.168.56.102 -D "windomain\vagrant" -w "vagrant" -b "dc=windomain,dc=local" "(&(objectclass=user)(SAMAccountName=*))" | grep sAMAccountName
 ```
 
 **What each flag does:**
-- `-x` — Use simple authentication instead of SASL
-- `-H ldap://192.168.56.102` — LDAP server URI
-- `-D "windomain\vagrant"` — Bind DN (the user we're authenticating as)
-- `-w "vagrant"` — Password for the bind user
-- `-b "dc=windomain,dc=local"` — Base DN (where to start the search in the directory tree)
-- `"(&(objectclass=user)(SAMAccountName=*))"` — LDAP filter: find all objects that are users AND have a SAMAccountName
-- `| grep sAMAccountName` — Filter output to show only usernames
+* `-x` — Use simple authentication instead of SASL
+* `-H ldap://192.168.56.102` — LDAP server URI
+* `-D "windomain\vagrant"` — Bind DN (the user we're authenticating as)
+* `-w "vagrant"` — Password for the bind user
+* `-b "dc=windomain,dc=local"` — Base DN (where to start the search in the directory tree)
+* `"(&(objectclass=user)(SAMAccountName=*))"` — LDAP filter: find all objects that are users AND have a SAMAccountName
+* `| grep sAMAccountName` — Filter output to show only usernames
 
-**Why this works:** LDAP is designed for directory queries. If you have valid credentials (even low-privileged ones), you can dump the entire user list, group memberships, computer accounts, and even password policy. It's basically reading the company's phone book — if you know how to ask.
+**Why this works:** LDAP is designed for directory queries. If you have valid credentials (even low privileged ones), you can dump the entire user list, group memberships, computer accounts, and even password policy. It's basically reading the company's phone book. If you know how to ask.
 
 ![LDAP Enumeration](screenshots/ldapsearch%20query.correct.png)
 
 ---
 
-### Phase 3: Credential Access via Password Spraying
+### Phase 4: Credential Access via Password Spraying
 
 **Objective:** Find valid credentials by testing common passwords against the discovered user account.
 
-#### Create a Password List
+> **Note:** Password spraying differs from brute force. In brute force, you try thousands of passwords against one account. In password spraying, you try a few common passwords against one or more accounts. This avoids account lockout thresholds and flies under the radar much better.
+
+In this lab, I targeted **one account only**: `vagrant`.
+
+#### Step 1: Create a Password List
 
 ```bash
-# Build a small list of commonly-used weak passwords
+# Build a small list of commonly used weak passwords
 cat > /tmp/passwordlist << EOF
 password
 123456
@@ -258,9 +258,19 @@ hacker
 EOF
 ```
 
-> **Note:** Password spraying differs from brute force. In brute force, you try thousands of passwords against one account. In password spraying, you try a few common passwords against one or more accounts. This avoids account lockout thresholds and flies under the radar much better.
+![Password List Creation](screenshots/Passwordlist%20Creation.png)
 
-#### Execute Password Spray with Hydra
+#### Step 2: Verify the Password List
+
+```bash
+# Check the password list was created correctly
+ls -la /tmp/passwordlist
+wc -l /tmp/passwordlist
+```
+
+![Password List Check](screenshots/Passwordlist%20Check.png)
+
+#### Step 3: Execute Password Spray with Hydra
 
 ```bash
 # Spray passwords against the SMB service on the Domain Controller
@@ -268,19 +278,19 @@ hydra -l vagrant -P /tmp/passwordlist smb://192.168.56.102
 ```
 
 **What each flag does:**
-- `hydra` — The THC-Hydra password cracking tool
-- `-l vagrant` — Single username to test
-- `-P /tmp/passwordlist` — Path to password list file
-- `smb://192.168.56.102` — Target protocol and IP address
+* `hydra` — The THC Hydra password cracking tool
+* `-l vagrant` — Single username to test
+* `-P /tmp/passwordlist` — Path to password list file
+* `smb://192.168.56.102` — Target protocol and IP address
 
 **What the output means:**
-When Hydra finds a valid password, it displays the successful credential pair. In this lab, `vagrant:vagrant` was a valid credential — not exactly Fort Knox-level security, but you'd be surprised how often this happens in real environments.
+When Hydra finds a valid password, it displays the successful credential pair. In this lab, `vagrant:vagrant` was a valid credential. Not exactly Fort Knox level security, but you'd be surprised how often this happens in real environments.
 
-![Hydra Password Spray](screenshots/Passwordlist%20Check.png)
+![Hydra Brute Force Successful](screenshots/Hydra-Brute-Force-Successful.png)
 
 ---
 
-### Phase 4: Post-Compromise Enumeration
+### Phase 5: Post Compromise Enumeration
 
 **Objective:** Verify access and enumerate privileges on the compromised system.
 
@@ -292,16 +302,16 @@ nxc smb 192.168.56.102 -u vagrant -p vagrant -x "whoami /priv"
 ```
 
 **What each flag does:**
-- `nxc smb` — Use NetExec's SMB module
-- `192.168.56.102` — Target IP address
-- `-u vagrant` — Username
-- `-p vagrant` — Password
-- `-x "whoami /priv"` — Execute the specified command on the target via SMB
+* `nxc smb` — Use NetExec's SMB module
+* `192.168.56.102` — Target IP address
+* `-u vagrant` — Username
+* `-p vagrant` — Password
+* `-x "whoami /priv"` — Execute the specified command on the target via SMB
 
 **What the output tells us:**
-The `whoami /priv` command lists all privileges assigned to the current token. I can see privileges like `SeMachineAccountPrivilege`, `SeSecurityPrivilege`, and `SeTakeOwnershipPrivilege`. Here's the thing — just having a privilege doesn't mean you can use it effectively, but it tells us what doors might be unlocked if we find the right key.
+The `whoami /priv` command lists all privileges assigned to the current token. I can see privileges like `SeMachineAccountPrivilege`, `SeSecurityPrivilege`, and `SeTakeOwnershipPrivilege`. Here's the thing. Just having a privilege doesn't mean you can use it effectively, but it tells us what doors might be unlocked if we find the right key.
 
-![Post-Compromise Privileges](screenshots/smb%20post%20compromise.png)
+![Post Compromise Privileges](screenshots/smb%20post%20compromise.png)
 
 ---
 
@@ -336,14 +346,14 @@ index=main host=dc EventCode=4625
 | where count > 5
 ```
 
-**Line-by-line breakdown:**
-- `index=main host=dc EventCode=4625` — Pull failed logon events from the main index, filtered to the Domain Controller host
-- `| stats count by src_ip` — Count events grouped by source IP address
-- `| where count > 5` — Filter to only show IPs with more than 5 failed attempts
+**Line by line breakdown:**
+* `index=main host=dc EventCode=4625` — Pull failed logon events from the main index, filtered to the Domain Controller host
+* `| stats count by src_ip` — Count events grouped by source IP address
+* `| where count > 5` — Filter to only show IPs with more than 5 failed attempts
 
-![Brute Force Detection - Alert Real IP](screenshots/Alert%20Real%20IP.png)
+![Brute Force Detection — Alert Real IP](screenshots/Alert%20Real%20IP.png)
 
-**Results:** The query identified <b>105 failed login attempts</b> from attacker IP <b>192.168.57.10</b>.
+**Results:** The query identified **105 failed login attempts** from attacker IP **192.168.57.10**.
 
 ---
 
@@ -357,8 +367,8 @@ index=main sourcetype="WinEventLog" EventCode=4624
 ```
 
 **What to look for:**
-- Source IP 192.168.57.10 appearing in successful logons
-- Correlation with the brute force detection query
+* Source IP 192.168.57.10 appearing in successful logons
+* Correlation with the brute force detection query
 
 ![Successful Authentication](screenshots/successfull%20logins%20using%20tools.png)
 
@@ -366,7 +376,7 @@ index=main sourcetype="WinEventLog" EventCode=4624
 
 #### Query 3: Time Series Visualization
 
-Create a time-based chart to visualize attack patterns:
+Create a time based chart to visualize attack patterns:
 
 ```spl
 index=main sourcetype="WinEventLog" EventCode=4625
@@ -379,15 +389,17 @@ index=main sourcetype="WinEventLog" EventCode=4625
 
 ### Dashboards
 
-I built a multi-panel detection dashboard called **"Detection Engineering1"** (owner: ojama) that provides a holistic view of the attack:
+I built a multi panel detection dashboard called **"Detection Engineering1"** (owner: ojama) that provides a holistic view of the attack:
 
 | Panel | Purpose |
 |-------|---------|
-| Failed Logins | Real-time failed authentication attempts |
+| Failed Logins | Real time failed authentication attempts |
 | Time Series Visualization | Attack pattern visualization over time |
 | Successful Login | Confirmed compromise indicators |
 
 ![Dashboard with Attacker IP](screenshots/Dashboard%20with%20correct%20ip.png)
+
+![Dashboard with Correct IP Extended](screenshots/Dashboard%20with%20correct%20ip..png)
 
 ![Dashboard Time Series Panel](screenshots/Detect-Dashboard-Timeseries.png)
 
@@ -397,22 +409,22 @@ I built a multi-panel detection dashboard called **"Detection Engineering1"** (o
 
 #### Alert 1: Brute Force Detection
 
-- **Name:** Brute Force
-- **Trigger Condition:** Number of Results is > 5 in 1 minute
-- **Action:** Add to Triggered Alerts
-- **App:** search
-- **Alert Type:** Real-time
+* **Name:** Brute Force
+* **Trigger Condition:** Number of Results is > 5 in 1 minute
+* **Action:** Add to Triggered Alerts
+* **App:** search
+* **Alert Type:** Real time
 
 ![Brute Force Alert](screenshots/Alert.png)
 
 #### Alert 2: Failed Logon Alert
 
-- **Name:** Failed Logon
-- **Trigger Condition:** Number of Results is > 0 in 1 minute
-- **Actions:** 
-  - Add to Triggered Alerts
-  - Send email
-- **Alert Type:** Real-time
+* **Name:** Failed Logon
+* **Trigger Condition:** Number of Results is > 0 in 1 minute
+* **Actions:** 
+  * Add to Triggered Alerts
+  * Send email
+* **Alert Type:** Real time
 
 ![Failed Logon Alert Results](screenshots/Alert-Result.png)
 
@@ -434,13 +446,13 @@ index=main host=dc (EventCode=4624 OR EventCode=4625) src_ip="192.168.57.10"
 | sort -count
 ```
 
-**Line-by-line breakdown:**
-- `index=main host=dc` — Search events from the Domain Controller
-- `(EventCode=4624 OR EventCode=4625)` — Focus on authentication-related events
-- `src_ip="192.168.57.10"` — Filter to the known attacker IP
-- `| eval attack_phase=case(...)` — Categorize each event into an attack phase
-- `| where attack_phase!="Other"` — Remove uncategorized events
-- `| stats count by attack_phase, src_ip` — Summarize by phase and attacker
+**Line by line breakdown:**
+* `index=main host=dc` — Search events from the Domain Controller
+* `(EventCode=4624 OR EventCode=4625)` — Focus on authentication related events
+* `src_ip="192.168.57.10"` — Filter to the known attacker IP
+* `| eval attack_phase=case(...)` — Categorize each event into an attack phase
+* `| where attack_phase!="Other"` — Remove uncategorized events
+* `| stats count by attack_phase, src_ip` — Summarize by phase and attacker
 
 ![Correlation Query](screenshots/correlation%20query.png)
 
@@ -451,13 +463,13 @@ index=main host=dc (EventCode=4624 OR EventCode=4625) src_ip="192.168.57.10"
 | Tactic | Technique ID | Technique Name | Lab Application | Detection Data Source |
 |--------|-------------|----------------|-----------------|----------------------|
 | Initial Access | T1566 | Phishing | Username acquisition via social engineering | Email Logs, User Training |
-| Reconnaissance | T1046 | Network Service Scanning | Nmap port scan against DC | Network Traffic, Firewall Logs |
+| Reconnaissance | T1046 | Network Service Scanning | Nmap scan against DC | Network Traffic, Firewall Logs |
 | Reconnaissance | T1018 | Remote System Discovery | Host enumeration via ping sweep | Network Traffic |
-| Discovery | T1087 | Account Discovery | LDAP user enumeration | Windows Event Logs |
+| Discovery | T1087 | Account Discovery | LDAP enumeration of domain users | Windows Event Logs |
 | Credential Access | T1110 | Brute Force | Hydra password spraying attack | Windows Event Code 4625 |
-| Initial Access | T1078 | Valid Accounts | Successful authentication with vagrant | Windows Security Logs |
-| Credential Access | T1003.001 | OS Credential Dumping: LSASS Memory | LSASS handling NTLM authentication | Windows Event Code 4624 |
-| Discovery | T1033 | System Owner/User Discovery | whoami /priv execution | Windows Event Logs |
+| Initial Access | T1078 | Valid Accounts | Successful authentication with vagrant | Windows Event Code 4624 |
+| Credential Access | T1003.001 | OS Credential Dumping: LSASS Memory | LSASS handling NTLM authentication | Windows Event Code 4624, Process Monitoring |
+| Discovery | T1033 | System Owner/User Discovery | whoami /priv execution | Windows Event Logs, Process Monitoring |
 | Lateral Movement | T1021.002 | Remote Services: SMB/Windows Admin Shares | NetExec SMB command execution | Network Traffic, Windows Event Logs |
 | Lateral Movement | T1021.001 | Remote Desktop Protocol | RDP service discovery | Network Traffic |
 
@@ -471,9 +483,10 @@ index=main host=dc (EventCode=4624 OR EventCode=4625) src_ip="192.168.57.10"
 |-----------|-------------|
 | [Nmap Scan](screenshots/Nmap%20Scan.png) | Port scanning the Domain Controller |
 | [LDAP Enumeration](screenshots/ldapsearch%20query.correct.png) | Querying AD users via LDAP |
-| [Password List](screenshots/Passwordlist%20Creation.png) | Creating the password spray list |
-| [Password Check](screenshots/Passwordlist%20Check.png) | Verifying the password list file |
-| [SMB Post-Compromise](screenshots/smb%20post%20compromise.png) | Enumerating privileges after compromise |
+| [Password List Creation](screenshots/Passwordlist%20Creation.png) | Creating the password spray list |
+| [Password List Check](screenshots/Passwordlist%20Check.png) | Verifying the password list file |
+| [Hydra Brute Force Successful](screenshots/Hydra-Brute-Force-Successful.png) | Hydra successful password spray |
+| [SMB Post Compromise](screenshots/smb%20post%20compromise.png) | Enumerating privileges after compromise |
 | [Whoami](screenshots/Whoami.png) | LSASS process in authentication event |
 
 ### Detection & Monitoring Screenshots
@@ -483,9 +496,10 @@ index=main host=dc (EventCode=4624 OR EventCode=4625) src_ip="192.168.57.10"
 | [Alert Real IP](screenshots/Alert%20Real%20IP.png) | Brute force detection with attacker IP 192.168.57.10 |
 | [Successful Logins](screenshots/successfull%20logins%20using%20tools.png) | Successful auth query results |
 | [Dashboard](screenshots/Dashboard%20with%20correct%20ip.png) | Full detection dashboard with attacker IP |
-| [Dashboard Time Series](screenshots/Detect-Dashboard-Timeseries.png) | Time series panel save dialog |
-| [Time Series Query](screenshots/Dashboard-Time%20Series.png) | Time-based visualization query |
-| [Correlation Query](screenshots/correlation%20query.png) | Multi-phase attack correlation |
+| [Dashboard Extended](screenshots/Dashboard%20with%20correct%20ip..png) | Dashboard showing successful logins with attacker IP |
+| [Dashboard Time Series Save](screenshots/Detect-Dashboard-Timeseries.png) | Time series panel save dialog |
+| [Time Series Query](screenshots/Dashboard-Time%20Series.png) | Time based visualization query |
+| [Correlation Query](screenshots/correlation%20query.png) | Multi phase attack correlation |
 | [Alert Configuration](screenshots/Alert.png) | Brute force alert setup |
 | [Alert Results](screenshots/Alert-Result.png) | Triggered alert history |
 | [Authentication Event](screenshots/Authentication%20successful.png) | Event 4624 showing successful logon |
@@ -507,7 +521,7 @@ index=main host=dc (EventCode=4624 OR EventCode=4625) src_ip="192.168.57.10"
 | [SYN Packets](screenshots/SYN%20packets.png) | Nmap SYN scan capture |
 | [LDAP Packets](screenshots/ldap%20packets.png) | LDAP query packet capture |
 | [SMB Packets](screenshots/Smb%20packets.png) | SMB session packets |
-| [TCP Handshake](screenshots/tcp%20stream%20handshake.png) | TCP three-way handshake |
+| [TCP Handshake](screenshots/tcp%20stream%20handshake.png) | TCP three way handshake |
 | [Source to Dest](screenshots/src%20to%20dst%20packets.png) | Traffic flow analysis |
 
 ---
@@ -557,7 +571,7 @@ multi-stage-recon-lab/
 │   ├── executive-summary.md           # Non-technical summary
 │   ├── technical-findings.md          # Detailed technical report
 │   └── mitigation-roadmap.md          # Remediation priorities
-└── screenshots/                       # All lab screenshots (37 files)
+└── screenshots/                       # All lab screenshots (38 files)
 ```
 
 ---
@@ -566,44 +580,44 @@ multi-stage-recon-lab/
 
 ### Prerequisites
 
-- VirtualBox or VMware Workstation
-- 16GB+ RAM recommended
-- 100GB+ free disk space
-- Basic understanding of networking and Active Directory
+* VirtualBox or VMware Workstation
+* 16GB+ RAM recommended
+* 100GB+ free disk space
+* Basic understanding of networking and Active Directory
 
 ### VM Setup
 
 1. **OPNsense Firewall**
-   - Import OPNsense ISO
-   - Configure WAN: 192.168.57.254/24
-   - Configure LAN: 192.168.56.254/24
-   - Enable NAT between zones
-   - Configure firewall rules (see `configs/firewall/opnsense-rules.md`)
+   * Import OPNsense ISO
+   * Configure WAN: 192.168.57.254/24
+   * Configure LAN: 192.168.56.254/24
+   * Enable NAT between zones
+   * Configure firewall rules (see `configs/firewall/opnsense-rules.md`)
 
 2. **Domain Controller (Windows Server)**
-   - Install Windows Server 2016/2019
-   - Configure static IP: 192.168.56.102/24
-   - Install AD DS, DNS roles
-   - Create domain: `windomain.local`
-   - Install Splunk Universal Forwarder
-   - Configure Windows Event Log forwarding to Splunk on port 9997
+   * Install Windows Server 2016/2019
+   * Configure static IP: 192.168.56.102/24
+   * Install AD DS, DNS roles
+   * Create domain: `windomain.local`
+   * Install Splunk Universal Forwarder
+   * Configure Windows Event Log forwarding to Splunk on port 9997
 
 3. **Splunk Server (Ubuntu)**
-   - Install Ubuntu 20.04/22.04 LTS
-   - Configure static IP: 192.168.56.106/24
-   - Install Splunk Enterprise
-   - Configure inputs for Windows Event Logs (port 9997) and Syslog (port 514)
+   * Install Ubuntu 20.04/22.04 LTS
+   * Configure static IP: 192.168.56.106/24
+   * Install Splunk Enterprise
+   * Configure inputs for Windows Event Logs (port 9997) and Syslog (port 514)
 
 4. **Windows 10 Workstation**
-   - Install Windows 10 Pro
-   - Configure static IP: 192.168.56.104/24
-   - Join to `windomain.local` domain
-   - Install web browsers for accessing Splunk and OPNsense web interfaces
+   * Install Windows 10 Pro
+   * Configure static IP: 192.168.56.104/24
+   * Join to `windomain.local` domain
+   * Install web browsers for accessing Splunk and OPNsense web interfaces
 
 5. **Kali Linux (Attacker)**
-   - Install Kali Linux
-   - Configure static IP: 192.168.57.10/24
-   - Install tools: `nmap`, `ldap-utils`, `hydra`, `netexec`
+   * Install Kali Linux
+   * Configure static IP: 192.168.57.10/24
+   * Install tools: `nmap`, `ldap-utils`, `hydra`, `netexec`
 
 ---
 
@@ -611,10 +625,10 @@ multi-stage-recon-lab/
 
 **Akpoga Dickson Ojama**
 
-Cybersecurity enthusiast and practitioner focused on red team operations, blue team defense, and SIEM engineering. This lab was built as a hands-on exercise to bridge the gap between offensive and defensive security skills.
+Cybersecurity enthusiast and practitioner focused on red team operations, blue team defense, and SIEM engineering. This lab was built as a hands on exercise to bridge the gap between offensive and defensive security skills.
 
-- **Email:** ojamadickson@gmail.com
-- **YouTube:** [Lab Walkthrough](https://www.youtube.com/watch?v=NHnI9oP_xTY)
+* **Email:** ojamadickson@gmail.com
+* **YouTube:** [Lab Walkthrough](https://www.youtube.com/watch?v=NHnI9oP_xTY)
 
 ---
 
@@ -625,9 +639,9 @@ Cybersecurity enthusiast and practitioner focused on red team operations, blue t
 The techniques, tools, and procedures described in this repository are intended to be used in controlled lab environments for learning defensive and offensive security skills. **Do not use these techniques against systems you do not own or have explicit written permission to test.**
 
 Unauthorized access to computer systems is illegal under:
-- Computer Fraud and Abuse Act (CFAA) in the United States
-- Computer Misuse Act in the United Kingdom
-- Similar legislation in most jurisdictions worldwide
+* Computer Fraud and Abuse Act (CFAA) in the United States
+* Computer Misuse Act in the United Kingdom
+* Similar legislation in most jurisdictions worldwide
 
 By using this repository, you agree to:
 1. Only test against systems you own or have written authorization to test
@@ -641,18 +655,18 @@ By using this repository, you agree to:
 
 ## References
 
-- [MITRE ATT&CK Framework](https://attack.mitre.org/)
-- [Splunk Documentation](https://docs.splunk.com/)
-- [Nmap Reference Guide](https://nmap.org/book/man.html)
-- [Hydra Documentation](https://github.com/vanhauser-thc/thc-hydra)
-- [NetExec Documentation](https://www.netexec.wiki/)
-- [OPNsense Documentation](https://docs.opnsense.org/)
-- [Microsoft Windows Security Log Events](https://www.ultimatewindowssecurity.com/securitylog/encyclopedia/)
-- [YouTube: Multi-Stage Recon & AD Penetration Testing Lab Walkthrough](https://www.youtube.com/watch?v=NHnI9oP_xTY)
+* [MITRE ATT&CK Framework](https://attack.mitre.org/)
+* [Splunk Documentation](https://docs.splunk.com/)
+* [Nmap Reference Guide](https://nmap.org/book/man.html)
+* [Hydra Documentation](https://github.com/vanhauser-thc/thc-hydra)
+* [NetExec Documentation](https://www.netexec.wiki/)
+* [OPNsense Documentation](https://docs.opnsense.org/)
+* [Microsoft Windows Security Log Events](https://www.ultimatewindowssecurity.com/securitylog/encyclopedia/)
+* [YouTube: Multi Stage Recon & AD Penetration Testing Lab Walkthrough](https://www.youtube.com/watch?v=NHnI9oP_xTY)
 
 ---
 
 <p align="center">
   <i>Built with curiosity, caffeine, and a healthy dose of paranoia.</i><br>
-  <b>Happy Hunting! 🎯</b>
+  <b>Happy Hunting! </b>
 </p>

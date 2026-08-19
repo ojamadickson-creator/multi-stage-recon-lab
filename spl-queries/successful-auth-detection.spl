@@ -14,4 +14,4 @@ index=main sourcetype="WinEventLog" EventCode=4624
 # - Source IP 192.168.57.10 appearing in successful logons
 # - Correlation with the brute force detection query
 #
-# Lab Results: 2 successful logons from attacker IP 192.168.57.10
+# Lab Results: Successful logons from attacker IP 192.168.57.10

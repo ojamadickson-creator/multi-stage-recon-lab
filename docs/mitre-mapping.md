@@ -1,6 +1,6 @@
 # MITRE ATT&CK Framework Mapping
 
-## Complete Technique Mapping for Multi-Stage Recon Lab
+## Complete Technique Mapping for Multi Stage Recon Lab
 
 This document provides a comprehensive mapping of all attack techniques used in the lab to the MITRE ATT&CK framework (v14).
 
@@ -21,7 +21,7 @@ This document provides a comprehensive mapping of all attack techniques used in 
 | T1003.001 | Credential Access | OS Credential Dumping: LSASS Memory | LSASS handling NTLM authentication | Windows Event Code 4624, Process Monitoring |
 | T1033 | Discovery | System Owner/User Discovery | whoami /priv for privilege enumeration | Windows Event Logs, Process Monitoring |
 | T1021.002 | Lateral Movement | Remote Services: SMB/Windows Admin Shares | NetExec SMB command execution | Network Traffic, Windows Event Logs |
-| T1021.001 | Lateral Movement | Remote Desktop Protocol | RDP service discovery and potential access | Network Traffic, Windows Event Logs |
+| T1021.001 | Lateral Movement | Remote Desktop Protocol | RDP service discovery and potential access | Network Traffic |
 
 ---
 
@@ -38,6 +38,6 @@ This document provides a comprehensive mapping of all attack techniques used in 
 
 ## References
 
-- [MITRE ATT&CK Framework](https://attack.mitre.org/)
-- [MITRE ATT&CK v14 Release Notes](https://attack.mitre.org/resources/updates/)
-- [Windows Security Log Encyclopedia](https://www.ultimatewindowssecurity.com/securitylog/encyclopedia/)
+* [MITRE ATT&CK Framework](https://attack.mitre.org/)
+* [MITRE ATT&CK v14 Release Notes](https://attack.mitre.org/resources/updates/)
+* [Windows Security Log Encyclopedia](https://www.ultimatewindowssecurity.com/securitylog/encyclopedia/)

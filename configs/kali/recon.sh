@@ -1,7 +1,7 @@
 #!/bin/bash
 # Automated Reconnaissance Script for AD Penetration Testing Lab
 # Target: windomain.local Domain Controller at 192.168.56.102
-# Author: SOC Lab Team
+# Author: Akpoga Dickson Ojama
 # DISCLAIMER: For authorized testing only!
 
 set -e
@@ -25,12 +25,18 @@ TIMESTAMP=$(date +%Y%m%d_%H%M%S)
 mkdir -p "$OUTPUT_DIR/$TIMESTAMP"
 
 echo -e "${CYAN}========================================${NC}"
-echo -e "${CYAN}  Multi-Stage Reconnaissance Script     ${NC}"
+echo -e "${CYAN}  Multi Stage Reconnaissance Script     ${NC}"
 echo -e "${CYAN}  Target: $TARGET_IP                   ${NC}"
 echo -e "${CYAN}========================================${NC}"
 echo ""
 
-# Phase 1: Host Discovery
+# Phase 1: Social Engineering (assumed)
+echo -e "${YELLOW}[Phase 0] Username Acquisition (Assumed via Social Engineering)${NC}"
+echo "----------------------------------------"
+echo -e "${CYAN}[*] Username acquired: $LDAP_USER${NC}"
+echo ""
+
+# Phase 2: Host Discovery
 echo -e "${YELLOW}[Phase 1] Host Discovery${NC}"
 echo "----------------------------------------"
 
@@ -38,7 +44,7 @@ echo -e "${CYAN}[*] Ping sweep to verify target is alive...${NC}"
 ping -c 3 "$TARGET_IP" | tee "$OUTPUT_DIR/$TIMESTAMP/ping_results.txt"
 echo ""
 
-# Phase 2: Port Scanning
+# Phase 3: Port Scanning
 echo -e "${YELLOW}[Phase 2] Port Scanning${NC}"
 echo "----------------------------------------"
 
@@ -51,12 +57,11 @@ echo -e "${CYAN}[*] Running full TCP port scan (top 1000)...${NC}"
 nmap -Pn -sT --top-ports 1000 "$TARGET_IP" -oN "$OUTPUT_DIR/$TIMESTAMP/nmap_top1000.txt"
 echo ""
 
-# Phase 3: Service Enumeration
+# Phase 4: Service Enumeration
 echo -e "${YELLOW}[Phase 3] Service Enumeration${NC}"
 echo "----------------------------------------"
 
 echo -e "${CYAN}[*] Enumerating SMB shares and users...${NC}"
-# Try null session first, then with credentials if available
 echo "Attempting SMB enumeration..."
 python3 -c "
 import subprocess
@@ -76,7 +81,7 @@ echo -e "${CYAN}[*] LDAP anonymous bind check...${NC}"
 ldapsearch -x -H "ldap://$TARGET_IP" -b "$TARGET_DOMAIN" "(objectClass=*)" 2>&1 | head -20 | tee "$OUTPUT_DIR/$TIMESTAMP/ldap_anon.txt" || true
 echo ""
 
-# Phase 4: User Enumeration (if credentials available)
+# Phase 5: User Enumeration (if credentials available)
 echo -e "${YELLOW}[Phase 4] Directory Enumeration${NC}"
 echo "----------------------------------------"
 
@@ -92,7 +97,7 @@ else
 fi
 echo ""
 
-# Phase 5: Summary
+# Phase 6: Summary
 echo -e "${GREEN}========================================${NC}"
 echo -e "${GREEN}  Reconnaissance Complete!               ${NC}"
 echo -e "${GREEN}========================================${NC}"

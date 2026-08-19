@@ -43,7 +43,7 @@ MITRE_TECHNIQUES = {
         "description": "Adversaries may use brute force techniques to gain access to accounts when passwords are unknown or when password hashes are obtained.",
         "platforms": ["Linux", "macOS", "Windows", "Network"],
         "data_sources": ["Authentication Logs", "Windows Event Logs"],
-        "lab_evidence": "NetExec password spraying from 192.168.57.10 against SMB service"
+        "lab_evidence": "Hydra password spraying from 192.168.57.10 against SMB service"
     },
     "T1078": {
         "name": "Valid Accounts",
@@ -85,22 +85,6 @@ MITRE_TECHNIQUES = {
         "data_sources": ["Authentication Logs", "Network Traffic"],
         "lab_evidence": "RDP service discovered on port 3389 during Nmap scan"
     },
-    "T1136.001": {
-        "name": "Create Account: Local Account",
-        "tactic": "Persistence",
-        "description": "Adversaries may create a local account to maintain access to victim systems.",
-        "platforms": ["Linux", "macOS", "Windows"],
-        "data_sources": ["Windows Event Logs", "Command Execution"],
-        "lab_evidence": "Event 4720 - User account creation detection"
-    },
-    "T1053.005": {
-        "name": "Scheduled Task/Job: Scheduled Task",
-        "tactic": "Execution, Persistence, Privilege Escalation",
-        "description": "Adversaries may abuse the Windows Task Scheduler to execute programs at system startup or on a scheduled basis for persistence.",
-        "platforms": ["Windows"],
-        "data_sources": ["Windows Event Logs", "File Monitoring"],
-        "lab_evidence": "Event 4698 - Scheduled task creation detection"
-    },
     "T1059": {
         "name": "Command and Scripting Interpreter",
         "tactic": "Execution",
@@ -117,14 +101,6 @@ MITRE_TECHNIQUES = {
         "data_sources": ["Windows Event Logs", "Authentication Logs"],
         "lab_evidence": "Group membership changes (Event 4732, 4756)"
     },
-    "T1070.004": {
-        "name": "Indicator Removal: File Deletion",
-        "tactic": "Defense Evasion",
-        "description": "Adversaries may delete files left behind by the actions of their intrusion activity.",
-        "platforms": ["Linux", "macOS", "Windows"],
-        "data_sources": ["File Monitoring", "Process Monitoring"],
-        "lab_evidence": "Detection of file deletion post-compromise"
-    },
     "T1027": {
         "name": "Obfuscated Files or Information",
         "tactic": "Defense Evasion",
@@ -132,22 +108,6 @@ MITRE_TECHNIQUES = {
         "platforms": ["Linux", "macOS", "Windows"],
         "data_sources": ["File Monitoring", "Process Monitoring"],
         "lab_evidence": "Encoded or obfuscated payloads in attack tools"
-    },
-    "T1041": {
-        "name": "Exfiltration Over C2 Channel",
-        "tactic": "Exfiltration",
-        "description": "Adversaries may steal data by exfiltrating it over an existing command and control channel.",
-        "platforms": ["Linux", "macOS", "Windows"],
-        "data_sources": ["Network Traffic", "Process Monitoring"],
-        "lab_evidence": "Data transfer over established SMB/NTLM session"
-    },
-    "T1550.002": {
-        "name": "Use Alternate Authentication Material: Pass the Hash",
-        "tactic": "Lateral Movement, Defense Evasion",
-        "description": "Adversaries may pass the hash using stolen password hashes to move laterally without knowing the actual password.",
-        "platforms": ["Windows"],
-        "data_sources": ["Authentication Logs", "Network Traffic"],
-        "lab_evidence": "NTLM authentication without password (hash-based)"
     }
 }
 
@@ -160,7 +120,7 @@ def generate_report(output_format="markdown"):
     if output_format == "markdown":
         report_lines.append("# MITRE ATT&CK Mapping Report")
         report_lines.append(f"\nGenerated: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
-        report_lines.append("\n## Lab: Multi-Stage Reconnaissance & AD Penetration Testing")
+        report_lines.append("\n## Lab: Multi Stage Reconnaissance & AD Penetration Testing")
         report_lines.append("\n---\n")
         
         report_lines.append("## Summary Table\n")
@@ -198,7 +158,7 @@ def generate_report(output_format="markdown"):
     elif output_format == "json":
         return json.dumps({
             "generated_at": datetime.now().isoformat(),
-            "lab_name": "Multi-Stage Reconnaissance & AD Penetration Testing",
+            "lab_name": "Multi Stage Reconnaissance & AD Penetration Testing",
             "techniques": MITRE_TECHNIQUES
         }, indent=2)
     
