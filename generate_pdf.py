@@ -236,7 +236,7 @@ story.append(PageBreak())
 story.append(Paragraph("4.4 Phase 4: LDAP Enumeration", H2))
 story.append(Paragraph("Objective: Extract user accounts and directory information using LDAP queries. LDAP is the protocol Windows uses to query Active Directory.", BODY))
 story.append(Paragraph("Command Used:", H3))
-story.append(Preformatted('ldapsearch -x -H ldap://192.168.56.102 -D "windomain\\vagrant" -w "vagrant" -b "dc=windomain,dc=local" "(&(objectclass=user)(SAMAccountName=*))" | grep sAMAccountName', CODE))
+story.append(Preformatted('ldapsearch -x -H ldap://192.168.56.102 -D "windomain\\vagrant" -w "vagrant" -b "dc=windomain,dc=local"\n"(&(objectclass=user)(SAMAccountName=*))" | grep sAMAccountName', CODE))
 story.append(Paragraph("Parameter Explanation:", H3))
 story.append(Paragraph("<b>-x</b> — Use simple authentication.<br/>"
     "<b>-H ldap://192.168.56.102</b> — LDAP server URI.<br/>"

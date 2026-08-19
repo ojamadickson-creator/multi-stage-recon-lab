@@ -272,7 +272,8 @@ When Hydra finds a valid password, it displays the successful credential pair. I
 
 ```bash
 # Query LDAP for all user accounts in the domain
-ldapsearch -x -H ldap://192.168.56.102 -D "windomain\vagrant" -w "vagrant" -b "dc=windomain,dc=local" "(&(objectclass=user)(SAMAccountName=*))" | grep sAMAccountName
+ldapsearch -x -H ldap://192.168.56.102 -D "windomain\vagrant" -w "vagrant" -b "dc=windomain,dc=local"
+"(&(objectclass=user)(SAMAccountName=*))" | grep sAMAccountName
 ```
 
 **What each flag does:**

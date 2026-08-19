@@ -101,7 +101,8 @@ The successful authentication returns an NTLM hash that can be reused for Pass t
 
 **Commands Executed:**
 ```bash
-ldapsearch -x -H ldap://192.168.56.102 -D "windomain\vagrant" -w "vagrant" -b "dc=windomain,dc=local" "(&(objectclass=user)(SAMAccountName=*))" | grep sAMAccountName
+ldapsearch -x -H ldap://192.168.56.102 -D "windomain\vagrant" -w "vagrant" -b "dc=windomain,dc=local"
+"(&(objectclass=user)(SAMAccountName=*))" | grep sAMAccountName
 ```
 
 **Findings:**
