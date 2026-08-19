@@ -69,7 +69,33 @@ The target is a Windows Domain Controller with LDAP, SMB, and RDP exposed. This 
 
 ---
 
-### Phase 3: LDAP Enumeration (T+5 to T+10 minutes)
+### Phase 3: Credential Access via Password Spraying (T+5 to T+10 minutes)
+
+**Tools Used:** THC Hydra
+
+**Commands Executed:**
+```bash
+hydra -l vagrant -P /tmp/passwordlist smb://192.168.56.102
+```
+
+**Findings:**
+* Tested 48 passwords against user "vagrant"
+* Valid credential pair discovered: **vagrant:vagrant**
+* Authentication successful via SMB (NTLM)
+* Access confirmed to WINDOMAIN domain
+
+**Technical Significance:**
+Password spraying proved highly effective due to:
+1. Weak password policy (common passwords like "vagrant" allowed)
+2. No account lockout threshold configured
+3. No multi factor authentication
+4. SMB service exposed and accessible from attacker network
+
+The successful authentication returns an NTLM hash that can be reused for Pass the Hash attacks.
+
+---
+
+### Phase 4: LDAP Enumeration (T+10 to T+15 minutes)
 
 **Tools Used:** ldapsearch (OpenLDAP utilities)
 
@@ -95,32 +121,6 @@ LDAP binding with valid (even low privilege) credentials allows full directory e
 * Password policy information
 
 The ability to query SAMAccountName for all users provides a complete target list for credential attacks.
-
----
-
-### Phase 4: Credential Access via Password Spraying (T+10 to T+15 minutes)
-
-**Tools Used:** THC Hydra
-
-**Commands Executed:**
-```bash
-hydra -l vagrant -P /tmp/passwordlist smb://192.168.56.102
-```
-
-**Findings:**
-* Tested 48 passwords against user "vagrant"
-* Valid credential pair discovered: **vagrant:vagrant**
-* Authentication successful via SMB (NTLM)
-* Access confirmed to WINDOMAIN domain
-
-**Technical Significance:**
-Password spraying proved highly effective due to:
-1. Weak password policy (common passwords like "vagrant" allowed)
-2. No account lockout threshold configured
-3. No multi factor authentication
-4. SMB service exposed and accessible from attacker network
-
-The successful authentication returns an NTLM hash that can be reused for Pass the Hash attacks.
 
 ---
 

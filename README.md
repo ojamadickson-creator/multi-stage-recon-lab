@@ -20,8 +20,8 @@
 * [Attack Chain (Red Team)](#attack-chain-red-team)
   * [Phase 1: Username Acquisition via Social Engineering](#phase-1-username-acquisition-via-social-engineering)
   * [Phase 2: Network Reconnaissance](#phase-2-network-reconnaissance)
-  * [Phase 3: LDAP Enumeration](#phase-3-ldap-enumeration)
-  * [Phase 4: Credential Access via Password Spraying](#phase-4-credential-access-via-password-spraying)
+  * [Phase 3: Credential Access via Password Spraying](#phase-3-credential-access-via-password-spraying)
+  * [Phase 4: LDAP Enumeration](#phase-4-ldap-enumeration)
   * [Phase 5: Post Compromise Enumeration](#phase-5-post-compromise-enumeration)
 * [Detection & Monitoring (Blue Team)](#detection--monitoring-blue-team)
   * [Splunk Data Ingestion](#splunk-data-ingestion)
@@ -174,33 +174,7 @@ The scan reveals a Windows Server acting as a Domain Controller with LDAP, SMB, 
 
 ---
 
-### Phase 3: LDAP Enumeration
-
-**Objective:** Extract user accounts, domain structure, and directory information from the target.
-
-#### Enumerate Domain Users via LDAP
-
-```bash
-# Query LDAP for all user accounts in the domain
-ldapsearch -x -H ldap://192.168.56.102 -D "windomain\vagrant" -w "vagrant" -b "dc=windomain,dc=local" "(&(objectclass=user)(SAMAccountName=*))" | grep sAMAccountName
-```
-
-**What each flag does:**
-* `-x` — Use simple authentication instead of SASL
-* `-H ldap://192.168.56.102` — LDAP server URI
-* `-D "windomain\vagrant"` — Bind DN (the user we're authenticating as)
-* `-w "vagrant"` — Password for the bind user
-* `-b "dc=windomain,dc=local"` — Base DN (where to start the search in the directory tree)
-* `"(&(objectclass=user)(SAMAccountName=*))"` — LDAP filter: find all objects that are users AND have a SAMAccountName
-* `| grep sAMAccountName` — Filter output to show only usernames
-
-**Why this works:** LDAP is designed for directory queries. If you have valid credentials (even low privileged ones), you can dump the entire user list, group memberships, computer accounts, and even password policy. It's basically reading the company's phone book. If you know how to ask.
-
-![LDAP Enumeration](screenshots/ldapsearch%20query.correct.png)
-
----
-
-### Phase 4: Credential Access via Password Spraying
+### Phase 3: Credential Access via Password Spraying
 
 **Objective:** Find valid credentials by testing common passwords against the discovered user account.
 
@@ -287,6 +261,32 @@ hydra -l vagrant -P /tmp/passwordlist smb://192.168.56.102
 When Hydra finds a valid password, it displays the successful credential pair. In this lab, `vagrant:vagrant` was a valid credential. Not exactly Fort Knox level security, but you'd be surprised how often this happens in real environments.
 
 ![Hydra Brute Force Successful](screenshots/Hydra-Brute-Force-Successful.png)
+
+---
+
+### Phase 4: LDAP Enumeration
+
+**Objective:** Extract user accounts, domain structure, and directory information from the target.
+
+#### Enumerate Domain Users via LDAP
+
+```bash
+# Query LDAP for all user accounts in the domain
+ldapsearch -x -H ldap://192.168.56.102 -D "windomain\vagrant" -w "vagrant" -b "dc=windomain,dc=local" "(&(objectclass=user)(SAMAccountName=*))" | grep sAMAccountName
+```
+
+**What each flag does:**
+* `-x` — Use simple authentication instead of SASL
+* `-H ldap://192.168.56.102` — LDAP server URI
+* `-D "windomain\vagrant"` — Bind DN (the user we're authenticating as)
+* `-w "vagrant"` — Password for the bind user
+* `-b "dc=windomain,dc=local"` — Base DN (where to start the search in the directory tree)
+* `"(&(objectclass=user)(SAMAccountName=*))"` — LDAP filter: find all objects that are users AND have a SAMAccountName
+* `| grep sAMAccountName` — Filter output to show only usernames
+
+**Why this works:** LDAP is designed for directory queries. If you have valid credentials (even low privileged ones), you can dump the entire user list, group memberships, computer accounts, and even password policy. It's basically reading the company's phone book. If you know how to ask.
+
+![LDAP Enumeration](screenshots/ldapsearch%20query.correct.png)
 
 ---
 
@@ -465,9 +465,9 @@ index=main host=dc (EventCode=4624 OR EventCode=4625) src_ip="192.168.57.10"
 | Initial Access | T1566 | Phishing | Username acquisition via social engineering | Email Logs, User Training |
 | Reconnaissance | T1046 | Network Service Scanning | Nmap scan against DC | Network Traffic, Firewall Logs |
 | Reconnaissance | T1018 | Remote System Discovery | Host enumeration via ping sweep | Network Traffic |
-| Discovery | T1087 | Account Discovery | LDAP enumeration of domain users | Windows Event Logs |
 | Credential Access | T1110 | Brute Force | Hydra password spraying attack | Windows Event Code 4625 |
 | Initial Access | T1078 | Valid Accounts | Successful authentication with vagrant | Windows Event Code 4624 |
+| Discovery | T1087 | Account Discovery | LDAP enumeration of domain users | Windows Event Logs |
 | Credential Access | T1003.001 | OS Credential Dumping: LSASS Memory | LSASS handling NTLM authentication | Windows Event Code 4624, Process Monitoring |
 | Discovery | T1033 | System Owner/User Discovery | whoami /priv execution | Windows Event Logs, Process Monitoring |
 | Lateral Movement | T1021.002 | Remote Services: SMB/Windows Admin Shares | NetExec SMB command execution | Network Traffic, Windows Event Logs |
@@ -482,10 +482,10 @@ index=main host=dc (EventCode=4624 OR EventCode=4625) src_ip="192.168.57.10"
 | Screenshot | Description |
 |-----------|-------------|
 | [Nmap Scan](screenshots/Nmap%20Scan.png) | Port scanning the Domain Controller |
-| [LDAP Enumeration](screenshots/ldapsearch%20query.correct.png) | Querying AD users via LDAP |
 | [Password List Creation](screenshots/Passwordlist%20Creation.png) | Creating the password spray list |
 | [Password List Check](screenshots/Passwordlist%20Check.png) | Verifying the password list file |
 | [Hydra Brute Force Successful](screenshots/Hydra-Brute-Force-Successful.png) | Hydra successful password spray |
+| [LDAP Enumeration](screenshots/ldapsearch%20query.correct.png) | Querying AD users via LDAP |
 | [SMB Post Compromise](screenshots/smb%20post%20compromise.png) | Enumerating privileges after compromise |
 | [Whoami](screenshots/Whoami.png) | LSASS process in authentication event |
 
