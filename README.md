@@ -58,10 +58,10 @@ I built this lab to bridge that gap. On one side, I took the Red Team perspectiv
 
 ### Network Topology
 
-```
+
  <img width="1024" height="553" alt="image" src="https://github.com/user-attachments/assets/99064845-1713-4c86-9807-2df7d7c52c9e" />
 
-```
+
 
 > **Important:** All screenshots and commands in this repository were captured from this exact topology. Every IP address, port, and system configuration matches what you see in the screenshots folder.
 
