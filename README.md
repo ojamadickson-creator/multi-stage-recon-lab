@@ -122,7 +122,7 @@ I built this lab to bridge that gap. On one side, I took the Red Team perspectiv
 
 ---
 
-##Technical & Operational Skills Demonstrated
+## Technical & Operational Skills Demonstrated
 SIEM Engineering & Pipeline Architecture (Splunk Enterprise): Configuring dedicated ingest inputs for native Windows Event Logs over TCP/9997 via Splunk Universal Forwarder, deploying RFC-compliant Syslog listeners over UDP/514 for network boundary logs, and authoring inputs.conf, props.conf, and savedsearches.conf.
 
 Detection Engineering & SPL Development: Writing custom Search Processing Language (SPL) queries for threshold-based brute force identification (EventCode=4625), successful account compromises (EventCode=4624), and time-series spike analytics using timechart.
