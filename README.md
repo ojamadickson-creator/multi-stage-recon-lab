@@ -122,6 +122,23 @@ I built this lab to bridge that gap. On one side, I took the Red Team perspectiv
 
 ---
 
+##Technical & Operational Skills Demonstrated
+SIEM Engineering & Pipeline Architecture (Splunk Enterprise): Configuring dedicated ingest inputs for native Windows Event Logs over TCP/9997 via Splunk Universal Forwarder, deploying RFC-compliant Syslog listeners over UDP/514 for network boundary logs, and authoring inputs.conf, props.conf, and savedsearches.conf.
+
+Detection Engineering & SPL Development: Writing custom Search Processing Language (SPL) queries for threshold-based brute force identification (EventCode=4625), successful account compromises (EventCode=4624), and time-series spike analytics using timechart.
+
+Multi-Source Incident Correlation: Fusing perimeter network telemetry and domain controller endpoint logs using conditional eval case logic to track an adversary across discrete attack lifecycle phases in real time.
+
+SOC Operations & Dashboard Design: Building production-style multi-panel visualization dashboards and configuring actionable real-time alerts with custom triggering criteria and email notification hooks.
+
+Active Directory Security & Windows Auditing: Hardening and configuring Windows Server Active Directory Domain Services (AD DS), provisioning organizational units, configuring audit policies via PowerShell, and auditing credential evaluations.
+
+Perimeter Defense & Network Architecture: Designing an isolated, dual-tier network architecture (untrusted WAN 192.168.57.0/24 to secured LAN 192.168.56.0/24) using an OPNsense firewall, implementing stateful filtering rules, NAT, and gateway routing.
+
+Adversary Emulation & Offensive Tooling: Executing targeted reconnaissance with nmap, password spraying over SMB using hydra, directory harvesting through ldapsearch, and post-exploitation privilege enumeration using netexec (nxc).
+
+Threat Modeling & Framework Mapping: Mapping multi-stage offensive behaviors and defensive detection telemetry directly to the MITRE ATT&CK framework across 9 distinct techniques (T1566, T1046, T1018, T1110, T1078, T1087, T1003.001, T1033, T1021.002, T1021.001).
+
 ## Attack Chain (Red Team)
 
 ### Phase 1: Username Acquisition via Social Engineering
