@@ -59,46 +59,8 @@ I built this lab to bridge that gap. On one side, I took the Red Team perspectiv
 ### Network Topology
 
 ```
-                    +-----------------------------+
-                    |         WAN Zone            |
-                    |      192.168.57.0/24        |
-                    |                             |
-                    |  +---------------------+    |
-                    |  |  Kali Linux         |    |
-                    |  |  192.168.57.10      |    |
-                    |  |  (Attacker)         |    |
-                    |  +----------+----------+    |
-                    |             |               |
-                    +-------------|---------------+
-                                  |
-                    +-------------v---------------+
-                    |    Firewall (OPNsense)      |
-                    |  WAN: 192.168.57.254        |
-                    |  LAN: 192.168.56.254        |
-                    |         (Gateway)           |
-                    +-------------+---------------+
-                                  |
-                    +-------------v---------------+
-                    |         LAN Zone            |
-                    |      192.168.56.0/24        |
-                    |                             |
-    +---------------+---------------+   +---------+----------+
-    |   Domain Controller           |   |  Splunk Server     |
-    |   192.168.56.102              |   |  192.168.56.106    |
-    |   Windows Server 2016/2019    |   |  Ubuntu Linux      |
-    |   WINDOMAIN.LOCAL             |   |  Splunk Enterprise |
-    |   AD DS, DNS, LDAP, SMB       |   |  Port 8000 (Web)   |
-    +---------------+---------------+   +---------+----------+
-                    |                             |
-    +---------------+---------------+             |
-    |   Windows 10 Workstation      |             |
-    |   192.168.56.104              |             |
-    |   Management / Access         |             |
-    |   Splunk & Firewall Web UIs   |             |
-    +-------------------------------+             |
-                                                  |
-    Log Flow: DC ----(Port 9997)----> Splunk     |
-    Syslog:  Firewall --(Port 514/UDP)--> Splunk |
+ <img width="1024" height="553" alt="image" src="https://github.com/user-attachments/assets/99064845-1713-4c86-9807-2df7d7c52c9e" />
+
 ```
 
 > **Important:** All screenshots and commands in this repository were captured from this exact topology. Every IP address, port, and system configuration matches what you see in the screenshots folder.
